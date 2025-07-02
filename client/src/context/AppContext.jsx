@@ -7,7 +7,7 @@ export const AppContext = createContext();
 
 export const AppContextProvider = ({children}) => {
 
-    const currency = import.meta.VITE_CURRENCY;
+    const currency = import.meta.env.VITE_CURRENCY;
 
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -58,9 +58,31 @@ export const AppContextProvider = ({children}) => {
         toast.success("Removed from cart");
     }
 
+    //Get Cart Items Count
+    const getCartCount = () => {
+        let totalCount = 0;
+        for(const item in cartItems) {
+            totalCount += cartItems[item];
+        }
+        return totalCount;
+    }
+
+    //Get Cart Total Amount
+    const getCartAmount = () =>{
+        let totalAmount = 0;
+        for(const items in cartItems) {
+            let itemInfo = products.find((product) => product._id === items)
+            if(cartItems[items] > 0){
+                totalAmount += itemInfo.offerPrice * cartItems[items]
+            }
+        }
+        return Math.floor(totalAmount * 100) / 100;
+    }
+
     const value = {navigate, user, setUser, isSeller, setIsSeller, 
             showUserLogin, setShowUserLogin, products, currency, addToCart,
-           cartItems, removeFromCart, updateCartItem, searchQuery, setSearchQuery
+           cartItems, removeFromCart, updateCartItem, searchQuery, setSearchQuery,
+           getCartCount, getCartAmount
     }
 
     useEffect(() => {
